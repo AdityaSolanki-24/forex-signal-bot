@@ -1,119 +1,488 @@
-# Coco OS — Full System
+# 🤖 Coco OS — Forex & Crypto Signal Intelligence System
 
-Coco is a fully automated, 24/7 forex/crypto signal system.
-It watches economic news, institutional positioning (COT),
-retail sentiment, social media, VIP accounts (Trump/Fed/etc),
-and crypto whale moves — then sends BUY/SELL signals with a
-pip target range and stop-loss straight to your Telegram.
+> **Automated market intelligence, multi-source analysis, and Telegram signal delivery.**
 
-The project is designed to support free or low-cost API tiers where available. API limits, terms, and pricing can change.
+Coco OS is an automated **forex and crypto market-analysis system** designed to monitor multiple market data sources, combine technical and fundamental information, score market conditions, and deliver trading signals directly to Telegram.
 
-## What's in this folder
+It combines:
 
-| File | Layer | What it does |
-|---|---|---|
-| `config.py` | — | All settings and API keys — fill this in first |
-| `database.py` | L | Logs every signal, tracks accuracy over time |
-| `coco_format.py` | I, K | Builds every Telegram message Coco sends |
-| `telegram_bot.py` | K | Sends messages to your Telegram |
-| `price_feed.py` | A | Live prices — the base layer everything checks against |
-| `econ_calendar.py` | A | Economic calendar (Forex Factory, no key needed) |
-| `news_engine.py` | A,C,F,I | Pre-event alerts + actual-vs-forecast signal logic |
-| `cot_sentiment.py` | C | Institutional bias (COT) + retail sentiment contrarian signal |
-| `social_engine.py` | C | StockTwits + Reddit sentiment |
-| `vip_monitor.py` | A,G | Trump/Fed/ECB/BOJ post detection — the fast emergency path |
-| `whale_alert.py` | A | Crypto whale transaction tracker |
-| `risk_environment.py` | C | VIX, risk-on/risk-off bias, black swan circuit breaker |
-| `coco_engine.py` | D,E,F,G,H | Combines everything, verifies, scores confidence, decides |
-| `technical_signal.py` | — | Runs the continuous 5-min confluence scan |
-| `main.py` | — | **Run this one** — ties every layer together on schedule |
+- 📈 Technical market analysis
+- 📰 Economic news monitoring
+- 🏦 Institutional positioning
+- 📊 Retail sentiment
+- 💬 Social sentiment
+- 🐋 Crypto whale activity
+- 🌍 Risk-on / risk-off environment
+- 🚨 High-impact event monitoring
+- 🤖 Multi-factor signal scoring
+- 📱 Telegram signal delivery
 
-## Setup — about 30-40 minutes total
+> **Note:** Coco OS is an analysis and signal-generation project. It does not guarantee profitable trades.
 
-### 1. Install Python
-Download Python 3.10+ from python.org/downloads.
-Check "Add Python to PATH" during install.
+---
 
-### 2. Install dependencies
-Open a terminal in this folder and run:
+## ✨ Features
 
-    pip install -r requirements.txt
+| Feature | Description |
+|---|---|
+| 📈 Technical Engine | Continuous technical confluence analysis |
+| 📰 Economic Calendar | Monitors upcoming and released economic events |
+| 🧠 News Engine | Compares actual vs forecast economic data |
+| 🏦 COT Analysis | Institutional positioning and market bias |
+| 👥 Retail Sentiment | Contrarian sentiment analysis |
+| 💬 Social Sentiment | StockTwits / Reddit sentiment integration |
+| 🚨 VIP Monitor | Monitors important public statements and events |
+| 🐋 Whale Monitor | Tracks crypto whale activity |
+| 🌍 Risk Environment | VIX and risk-on / risk-off conditions |
+| 🎯 Signal Engine | Combines multiple inputs into a confidence score |
+| 📱 Telegram Bot | Sends generated signals and alerts |
+| 💾 Database | Stores signals and performance information |
 
-(The `torch`/`transformers` install can take a few minutes —
-that's normal, it's the FinBERT NLP model.)
+---
 
-### 3. Get your free API keys
+# 🏗️ System Architecture
 
-**Twelve Data** (live prices)
-1. twelvedata.com → sign up free → copy API key
+```text
+                    ┌──────────────────────┐
+                    │      Coco OS         │
+                    │  Signal Intelligence │
+                    └──────────┬───────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │                      │                      │
+        ▼                      ▼                      ▼
+ ┌─────────────┐        ┌─────────────┐       ┌─────────────┐
+ │ Price Feed  │        │ News Engine │       │ Sentiment   │
+ │             │        │             │       │ Engines     │
+ └──────┬──────┘        └──────┬──────┘       └──────┬──────┘
+        │                       │                     │
+        └───────────────────────┼─────────────────────┘
+                                ▼
+                     ┌─────────────────────┐
+                     │   Coco Engine       │
+                     │                     │
+                     │ Multi-Factor Score  │
+                     └──────────┬──────────┘
+                                │
+                    ┌───────────┴───────────┐
+                    ▼                       ▼
+             ┌─────────────┐        ┌─────────────┐
+             │  Database   │        │   Telegram   │
+             │             │        │     Bot      │
+             └─────────────┘        └─────────────┘
+````
 
-**Telegram Bot**
-1. Open Telegram, search **@BotFather**
-2. Send `/newbot`, choose a name + username ending in `_bot`
-3. Copy the token BotFather gives you
-4. Send any message to your new bot
-5. Visit `https://api.telegram.org/botYOUR_TOKEN/getUpdates`
-6. Find `"chat":{"id":123456789` — that's your chat ID
+---
 
-**Reddit** (optional — social engine works without it,
-just runs on StockTwits alone)
-1. reddit.com/prefs/apps → Create App → choose "script"
-2. Copy the client ID (under the app name) and secret
+# 📂 Project Structure
 
-**Whale Alert** (optional — crypto whale signals only)
-1. whale-alert.io → request a free API key
+| File                  | Purpose                                            |
+| --------------------- | -------------------------------------------------- |
+| `config.py`           | Application configuration and environment settings |
+| `database.py`         | Signal logging and database operations             |
+| `coco_format.py`      | Formats Telegram messages                          |
+| `telegram_bot.py`     | Telegram notification system                       |
+| `price_feed.py`       | Live market price data                             |
+| `econ_calendar.py`    | Economic calendar monitoring                       |
+| `news_engine.py`      | Fundamental/news-based analysis                    |
+| `cot_sentiment.py`    | Institutional and retail sentiment                 |
+| `social_engine.py`    | Social media sentiment                             |
+| `vip_monitor.py`      | Important public-event monitoring                  |
+| `whale_alert.py`      | Crypto whale activity monitoring                   |
+| `risk_environment.py` | Market risk environment analysis                   |
+| `coco_engine.py`      | Core multi-factor signal engine                    |
+| `technical_signal.py` | Technical market analysis                          |
+| `main.py`             | Main application entry point                       |
 
-**Finnhub / FRED** (reserved for future expansion —
-not required for this build to run)
+---
 
-### 4. Fill in config.py
-Open `config.py` and paste your keys into the top section.
-Leave any key as `"YOUR_..._HERE"` and Coco will simply skip
-that feature gracefully — nothing crashes.
+# ⚙️ Technology Stack
 
-### 5. Run Coco
+### Backend
 
-    python main.py
+* 🐍 Python
+* 🗄️ SQLite / database layer
+* 🔌 REST APIs
+* 🤖 Telegram Bot API
 
-## What you'll see
+### Market Intelligence
 
-- A startup message on Telegram confirming every layer is live
-- VIP and whale checks every ~60 seconds
-- News pre-alerts 30 minutes before high-impact releases
-- Main news signals within seconds of an actual release
-- Technical confluence signals roughly every 5-10 minutes,
-  only when confidence clears 55%
-- A terminal log showing what Coco is checking in real time
+* 📊 Technical analysis
+* 📰 Economic data
+* 🏦 COT positioning
+* 💬 Social sentiment
+* 🐋 Whale activity
+* 🌍 Risk environment analysis
 
-## Important honesty note
+### NLP / AI
 
-The "AI confluence engine" runs on weighted-rules scoring
-from day one (see `coco_engine.py`) — this is intentional.
-There's no signal history to train a machine learning model
-on yet. Once `database.py` has logged 200+ signals, that's
-the natural point to swap in a trained XGBoost/LSTM model in
-`combine_signals()` — the function's inputs and outputs stay
-exactly the same, so nothing else in Coco needs to change.
+* 🤗 Transformers
+* 🧠 FinBERT-based sentiment analysis
+* 📐 Rule-based weighted confluence engine
 
-## Going further
+---
 
-- COT parsing (`cot_sentiment.py`) ships with a safe neutral
-  placeholder — wire in a real CFTC CSV parser when ready
-- Retail sentiment ships neutral too — swap in OANDA/FXSSI
-  once you have those API credentials
-- SMC pattern detection (order blocks, FVGs) can slot into
-  `technical_signal.py`'s technical engine following the same
-  `{"direction", "strength", "reasons"}` shape every other
-  engine uses
-- For 24/7 hosting (not just your laptop), deploy `main.py`
-  to Railway.app's free tier when you're ready — the code is
-  written to run anywhere Python runs, no changes needed
+# 🚀 Getting Started
 
+## 1. Clone the Repository
 
-## Security
+```bash
+git clone https://github.com/AdityaSolanki-24/forex-signal-bot.git
+```
 
-Never commit `.env`, API keys, Telegram bot tokens, database files, virtual environments, or runtime logs. If a credential is ever exposed, revoke/rotate it immediately and replace it in your local environment.
+```bash
+cd forex-signal-bot
+```
 
-## Risk Disclaimer
+---
 
-This software generates market/forex trading signals for research and educational purposes. It does not guarantee profits or future market performance and is not financial advice. Trading leveraged instruments can result in substantial losses. Validate signals independently and use appropriate risk controls.
+## 2. Create a Virtual Environment
+
+### Windows
+
+```bash
+python -m venv venv
+```
+
+Activate it:
+
+```bash
+venv\Scripts\activate
+```
+
+### macOS / Linux
+
+```bash
+python3 -m venv venv
+```
+
+```bash
+source venv/bin/activate
+```
+
+---
+
+## 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+> Some NLP dependencies may take additional time to install.
+
+---
+
+# 🔑 API Configuration
+
+Coco can work with several external services.
+
+Create your local environment configuration using:
+
+```text
+.env.example
+```
+
+Copy it to:
+
+```text
+.env
+```
+
+### Example
+
+```env
+TWELVE_DATA_API_KEY=YOUR_API_KEY
+TELEGRAM_BOT_TOKEN=YOUR_BOT_TOKEN
+TELEGRAM_CHAT_ID=YOUR_CHAT_ID
+
+REDDIT_CLIENT_ID=YOUR_CLIENT_ID
+REDDIT_CLIENT_SECRET=YOUR_CLIENT_SECRET
+
+WHALE_ALERT_API_KEY=YOUR_API_KEY
+```
+
+### 🔐 Security
+
+**Never commit `.env` to GitHub.**
+
+The `.gitignore` file is configured to prevent sensitive files from being uploaded.
+
+Never publish:
+
+```text
+.env
+API keys
+Telegram bot tokens
+Passwords
+Database files containing private data
+venv/
+__pycache__/
+Runtime logs
+```
+
+If a credential is accidentally exposed:
+
+1. Revoke it immediately.
+2. Generate a new credential.
+3. Replace it locally.
+4. Check Git history if necessary.
+
+---
+
+# 📱 Telegram Setup
+
+Coco can deliver market alerts through Telegram.
+
+### Create a Telegram Bot
+
+1. Open Telegram.
+2. Search for **@BotFather**.
+3. Send:
+
+```text
+/newbot
+```
+
+4. Follow the instructions.
+5. Save the generated bot token securely.
+6. Start a conversation with your bot.
+7. Configure your Telegram chat ID in `.env`.
+
+---
+
+# ▶️ Running Coco
+
+Start the system with:
+
+```bash
+python main.py
+```
+
+You should see the application start monitoring configured market sources.
+
+Depending on your configuration, Coco can perform:
+
+```text
+Price Monitoring
+       ↓
+Economic Events
+       ↓
+News Analysis
+       ↓
+Sentiment Analysis
+       ↓
+Risk Environment
+       ↓
+Technical Confluence
+       ↓
+Signal Scoring
+       ↓
+Telegram Notification
+```
+
+---
+
+# 📡 Signal Processing
+
+Coco follows a multi-factor approach rather than relying on a single indicator.
+
+Conceptually:
+
+```text
+Market Data
+     +
+Technical Analysis
+     +
+Fundamental News
+     +
+Institutional Positioning
+     +
+Sentiment
+     +
+Risk Environment
+     +
+Additional Market Events
+     ↓
+Confluence Engine
+     ↓
+Confidence Score
+     ↓
+Signal / No Signal
+     ↓
+Telegram
+```
+
+The system is designed to avoid treating one data source as sufficient by itself.
+
+---
+
+# 🧠 Current Signal Engine
+
+The current "AI confluence engine" uses a **weighted rules-based scoring system**.
+
+This is intentional.
+
+The system does not currently claim to be a fully trained predictive machine-learning model.
+
+As historical signal data accumulates, the architecture can be extended with additional machine-learning models.
+
+Potential future models include:
+
+* XGBoost
+* LSTM
+* Transformer-based models
+* Time-series classification
+* Market regime classification
+
+---
+
+# 🛠️ Future Roadmap
+
+## Phase 1 — Core System
+
+* [x] Market price feed
+* [x] Technical analysis
+* [x] Telegram integration
+* [x] Economic calendar
+* [x] News monitoring
+* [x] Database logging
+* [x] Risk environment
+
+## Phase 2 — Intelligence
+
+* [ ] Improved COT parser
+* [ ] Advanced retail sentiment
+* [ ] Improved social sentiment
+* [ ] More market data providers
+* [ ] Advanced market regime detection
+
+## Phase 3 — Machine Learning
+
+* [ ] Historical dataset generation
+* [ ] Feature engineering
+* [ ] Model training
+* [ ] Backtesting framework
+* [ ] Model evaluation
+* [ ] Prediction comparison
+
+## Phase 4 — Production
+
+* [ ] Web dashboard
+* [ ] User authentication
+* [ ] Multi-user Telegram support
+* [ ] Cloud deployment
+* [ ] Monitoring and logging
+* [ ] API service
+* [ ] Automated testing
+
+---
+
+# 📊 Data Sources
+
+Depending on configuration, Coco can integrate with services such as:
+
+* Twelve Data
+* Reddit
+* StockTwits
+* Whale Alert
+* Economic calendar data
+* COT data
+* Telegram
+
+> APIs, free tiers, rate limits, availability, and pricing can change. Always check the provider's current documentation and terms.
+
+---
+
+# 🔒 Security Best Practices
+
+Before deploying Coco:
+
+* Use environment variables for credentials.
+* Never commit API keys.
+* Never commit Telegram bot tokens.
+* Keep `.env` local.
+* Keep databases containing private information out of Git.
+* Rotate credentials if exposed.
+* Use separate credentials for development and production.
+* Review third-party API permissions.
+
+---
+
+# ⚠️ Risk Disclaimer
+
+Coco OS is a **software project for research, experimentation, and educational purposes**.
+
+It generates market analysis and trading signals based on programmed rules and available data.
+
+It does **not** guarantee profits, returns, accuracy, or future market performance.
+
+Trading forex, crypto, CFDs, and other leveraged financial instruments involves substantial risk of loss.
+
+Nothing in this repository should be considered financial, investment, or trading advice.
+
+Always perform your own research and use appropriate risk-management practices.
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+Typical workflow:
+
+```bash
+git checkout -b feature/your-feature
+```
+
+Make your changes, test them, then:
+
+```bash
+git add .
+git commit -m "Add your feature"
+git push origin feature/your-feature
+```
+
+Open a Pull Request on GitHub.
+
+---
+
+# 📄 License
+
+This project is currently intended for educational and research purposes.
+
+Add an appropriate open-source license before accepting external contributions or redistributing the project.
+
+---
+
+# 👨‍💻 Author
+
+**Aditya Solanki**
+
+Founder & Developer
+
+GitHub:
+
+[https://github.com/AdityaSolanki-24](https://github.com/AdityaSolanki-24)
+
+---
+
+# ⭐ Coco OS
+
+**Automate market intelligence.
+Combine multiple signals.
+Deliver insights faster.**
+
+⭐ If you find the project useful, consider starring the repository.
+
+```
+
+### One important change from your current README
+
+Your current README says:
+
+> `config.py` — All settings and API keys — fill this in first
+
+Since you're putting this on **public GitHub**, I'd avoid encouraging users to put real keys directly into `config.py`. The new README uses **`.env` + `.env.example`**, which is much safer.
+
+Also, don't put your **real Twelve Data key, Telegram token, Reddit secret, or Whale Alert key** anywhere in the README.
+```
