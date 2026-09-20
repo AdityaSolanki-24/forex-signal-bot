@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+praw
+textblob
+transformers
+torch
+python-dotenv
